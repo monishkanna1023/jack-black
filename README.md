@@ -1,6 +1,6 @@
 # Basic Strategy Trainer
 
-An interactive trainer for the basic strategy chart in `BJA_Basic_Strategy.jpg`. It's an installable web app (PWA): it works offline and can be added to your phone's home screen.
+An interactive trainer for blackjack basic strategy. The chart is transcribed cell by cell in `public/js/strategy.js`. It's an installable web app (PWA): it works offline and can be added to your phone's home screen.
 
 ## Run it locally
 
@@ -13,7 +13,7 @@ python3 -m http.server 8765 --directory public
 
 ## Host it on Netlify
 
-Only the `public/` folder gets published. The tests, this README and the chart image stay private.
+Only the `public/` folder gets published to the site. The tests and this README stay in the repo and aren't served.
 
 - **Drag and drop (easiest):** go to https://app.netlify.com/drop and drag the `public` folder onto the page.
 - **CLI:** `npx netlify-cli deploy --prod` from this folder. `netlify.toml` already points at `public/`.
