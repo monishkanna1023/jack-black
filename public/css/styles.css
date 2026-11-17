@@ -450,8 +450,20 @@ summary { cursor: pointer; color: var(--accent); font-weight: 600; font-size: .8
 
 /* ---------- phones ---------- */
 @media (max-width: 700px) {
-  :root { --nav-h: 58px; }
-  body { padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom) + 8px); }
+  /* Floating pill nav: its height, its gap from the screen bottom (clears the iPhone
+     home indicator), and the width shared with the quiz answer pad that floats above it. */
+  :root {
+    --nav-h: 64px;
+    --nav-gap: max(12px, env(safe-area-inset-bottom));
+    --float-w: min(440px, calc(100% - 24px - env(safe-area-inset-left) - env(safe-area-inset-right)));
+  }
+  body { padding-bottom: calc(var(--nav-h) + var(--nav-gap) + 16px); }
+  /* Fade the page out behind the floating nav so it stays readable over busy content. */
+  body::after {
+    content: ''; position: fixed; left: 0; right: 0; bottom: 0; z-index: 24; pointer-events: none;
+    height: calc(var(--nav-h) + var(--nav-gap) + 24px);
+    background: linear-gradient(to bottom, rgba(38,41,46,0), rgba(29,32,36,.92) 70%);
+  }
   main { padding: 12px max(10px, env(safe-area-inset-right)) 16px max(10px, env(safe-area-inset-left)); }
   .foot { padding-bottom: 12px; }
 
@@ -464,16 +476,42 @@ summary { cursor: pointer; color: var(--accent); font-weight: 600; font-size: .8
   .long { display: none; }
   .short { display: inline; }
 
-  /* bottom tab bar */
+  /* bottom nav: a floating glass pill */
   .tabs {
-    position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
-    display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; overflow: visible;
-    padding: 4px max(4px, env(safe-area-inset-right)) calc(4px + env(safe-area-inset-bottom)) max(4px, env(safe-area-inset-left));
-    background: rgba(22,24,28,.96); border-top: 1px solid #000; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    position: fixed; left: 0; right: 0; bottom: var(--nav-gap); z-index: 30;
+    width: var(--float-w); height: var(--nav-h); margin: 0 auto; padding: 6px;
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; overflow: visible;
+    border-radius: 999px; border: 1px solid rgba(255,255,255,.09);
+    background: rgba(29,32,36,.78);
+    box-shadow: 0 14px 34px rgba(0,0,0,.55), 0 2px 6px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.07);
+    backdrop-filter: blur(18px) saturate(160%); -webkit-backdrop-filter: blur(18px) saturate(160%);
   }
-  .tabs button { flex-direction: column; gap: 3px; padding: 6px 2px; font-size: .68rem; border-radius: 10px; min-height: 50px; justify-content: center; }
-  .tabs button.on { background: rgba(34,181,115,.14); color: var(--accent); }
-  .ti { width: 22px; height: 22px; }
+  /* The active-tab highlight is one capsule that slides between tabs. */
+  .tabs::before {
+    content: ''; position: absolute; z-index: -1; top: 6px; bottom: 6px; left: 6px; width: calc((100% - 12px) / 5);
+    border-radius: 999px; background: rgba(34,181,115,.17); box-shadow: inset 0 0 0 1px rgba(34,181,115,.32);
+    transition: transform .32s cubic-bezier(.3, .7, .3, 1);
+  }
+  .tabs:has([data-tab="drill"].on)::before { transform: translateX(100%); }
+  .tabs:has([data-tab="quiz"].on)::before { transform: translateX(200%); }
+  .tabs:has([data-tab="play"].on)::before { transform: translateX(300%); }
+  .tabs:has([data-tab="progress"].on)::before { transform: translateX(400%); }
+  .tabs:not(:has(.on))::before { opacity: 0; }
+  .tabs button {
+    flex-direction: column; justify-content: center; gap: 3px; padding: 4px 2px; min-height: 0;
+    font-size: .68rem; border-radius: 999px; transition: color .2s;
+  }
+  .tabs button.on { background: none; color: var(--accent); }
+  .tabs button:active .ti { transform: scale(.88); }
+  .ti { width: 22px; height: 22px; transition: transform .15s; }
+  /* Older browsers without :has(): highlight the active tab itself instead. */
+  @supports not selector(:has(*)) {
+    .tabs::before { display: none; }
+    .tabs button.on { background: rgba(34,181,115,.17); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tabs::before, .ti { transition: none; }
+  }
 
   select { font-size: 16px; } /* stops iOS zooming in on focus */
   .rules-panel { padding: 14px; }
@@ -533,15 +571,20 @@ summary { cursor: pointer; color: var(--accent); font-weight: 600; font-size: .8
   .quiz-layout > aside { order: -1; padding: 12px 14px; }
   .quiz-q { font-size: 1.2rem; }
   .answer-pad {
-    position: fixed; left: 0; right: 0; bottom: calc(var(--nav-h) + env(safe-area-inset-bottom)); z-index: 25; margin: 0;
-    grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 6px; padding: 8px 10px;
-    background: rgba(22,24,28,.97); border-top: 1px solid var(--line);
+    position: fixed; left: 0; right: 0; bottom: calc(var(--nav-gap) + var(--nav-h) + 8px); z-index: 25;
+    width: var(--float-w); margin: 0 auto;
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 6px; padding: 7px;
+    border-radius: 24px; border: 1px solid rgba(255,255,255,.09);
+    background: rgba(29,32,36,.84);
+    box-shadow: 0 14px 34px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.07);
+    backdrop-filter: blur(18px) saturate(160%); -webkit-backdrop-filter: blur(18px) saturate(160%);
   }
-  .pad-btn { flex-direction: column; gap: 4px; padding: 8px 4px; text-align: center; }
+  .pad-btn { flex-direction: column; gap: 4px; padding: 8px 4px; text-align: center; border-radius: 17px; }
   .pad-btn .swatch { min-width: 54px; font-size: 1.05rem; padding: 6px 8px; }
   .pad-desc { font-size: .7rem; }
-  body[data-tab="quiz"] { padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom) + 92px); }
-  .bs-table td.current { scroll-margin: 90px 0 180px; }
+  body[data-tab="quiz"] { padding-bottom: calc(var(--nav-h) + var(--nav-gap) + 112px); }
+  body[data-tab="quiz"]::after { height: calc(var(--nav-h) + var(--nav-gap) + 112px); }
+  .bs-table td.current { scroll-margin: 90px 0 calc(var(--nav-h) + var(--nav-gap) + 120px); }
 
   .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .tile { padding: 10px 12px; }

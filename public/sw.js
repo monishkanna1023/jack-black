@@ -1,7 +1,7 @@
 /* Service worker: makes the trainer work offline.
    Strategy: serve from cache instantly, refresh the cache from the network in the background,
    so a new deploy shows up on the next launch. Bump VERSION to force a clean re-download. */
-const VERSION = 'v2';
+const VERSION = 'v3';
 const CACHE = `bj-trainer-${VERSION}`;
 const ASSETS = [
   './',
