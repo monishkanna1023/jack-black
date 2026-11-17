@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="felt" cx="50%" cy="35%" r="75%">
+      <stop offset="0" stop-color="#18925a"/>
+      <stop offset="1" stop-color="#0a4a2e"/>
+    </radialGradient>
+    <pattern id="back" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="16" height="16" fill="#8e1b15"/>
+      <rect width="8" height="16" fill="#b3261e"/>
+    </pattern>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#felt)"/>
+  <!-- card back -->
+  <g transform="rotate(-14 256 270)">
+    <rect x="128" y="120" width="200" height="280" rx="24" fill="#fdfdfb"/>
+    <rect x="142" y="134" width="172" height="252" rx="14" fill="url(#back)"/>
+  </g>
+  <!-- ace of spades -->
+  <g transform="rotate(9 256 270)">
+    <rect x="186" y="110" width="200" height="280" rx="24" fill="#fdfdfb"/>
+    <path transform="translate(226 170) scale(1.2)" fill="#1b1d21"
+      d="M50 4C50 4 8 40 8 63c0 16 14 25 27 23 6-1 10-4 12-8-1 10-5 17-12 21h30c-7-4-11-11-12-21 2 4 6 7 12 8 13 2 27-7 27-23C92 40 50 4 50 4z"/>
+    <path transform="translate(204 128)" fill="#1b1d21" d="M15 0h12l15 44h-10l-3-10H13l-3 10H0zm1 26h10l-5-16z"/>
+  </g>
+</svg>

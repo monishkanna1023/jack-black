@@ -1,0 +1,4 @@
+# Static site, no build step. Only the public/ folder is published.
+[build]
+  publish = "public"
+  command = ""

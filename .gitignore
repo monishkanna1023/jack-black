@@ -1,0 +1,13 @@
+# macOS
+.DS_Store
+
+# Claude Code: personal, machine-local settings
+.claude/settings.local.json
+
+# Netlify CLI (created if you ever run `netlify link` / `netlify deploy`)
+.netlify/
+
+# The source chart image. The app doesn't need it (the chart is transcribed
+# into public/js/strategy.js), and it's someone else's copyrighted chart.
+# Delete this line if the repo is private and you want it backed up.
+BJA_Basic_Strategy.jpg

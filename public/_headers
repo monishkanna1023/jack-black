@@ -1,0 +1,14 @@
+# Response headers. Netlify and Cloudflare Pages both read this file.
+#
+# The Content-Security-Policy only lets this site's own files run. It also
+# stops a host from injecting inline scripts into the page (for example
+# Netlify's "Powered by Netlify" badge on Free-plan sites).
+/sw.js
+  Cache-Control: no-cache
+/manifest.json
+  Content-Type: application/manifest+json
+  Cache-Control: no-cache
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: same-origin
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'

@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Basic Strategy Trainer</title>
+  <meta name="description" content="Learn blackjack basic strategy: interactive chart, drills, fill-in quiz and single-deck play with a coach.">
+  <meta name="theme-color" content="#1d2024">
+  <meta name="color-scheme" content="dark">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="BJ Trainer">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <img class="logo" src="icons/icon.svg" alt="" width="38" height="38">
+      <div>
+        <h1>Basic Strategy Trainer</h1>
+        <p>Learn the chart. Practise on a single deck.</p>
+      </div>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Sections">
+      <button role="tab" data-tab="chart">
+        <svg class="ti" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
+        <span>Chart</span>
+      </button>
+      <button role="tab" data-tab="drill">
+        <svg class="ti" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>
+        <span>Drill</span>
+      </button>
+      <button role="tab" data-tab="quiz">
+        <svg class="ti" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+        <span class="long">Fill the Chart</span><span class="short">Fill in</span>
+      </button>
+      <button role="tab" data-tab="play">
+        <svg class="ti" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="3" width="12" height="17" rx="2"/><path d="M5 7v12a2 2 0 0 0 2 2h8"/></svg>
+        <span>Play</span>
+      </button>
+      <button role="tab" data-tab="progress">
+        <svg class="ti" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20h18"/><path d="M7 16v-5M12 16V6M17 16V9"/></svg>
+        <span>Progress</span>
+      </button>
+    </nav>
+    <div class="top-actions">
+      <button class="rules-btn install-btn" id="installBtn" hidden>⤓ Install</button>
+      <button class="rules-btn" id="rulesBtn" aria-expanded="false" aria-controls="rulesPanel">⚙ <span class="long">Table rules</span><span class="short">Rules</span></button>
+    </div>
+  </header>
+
+  <div class="ios-hint" id="iosHint" hidden>
+    <span>Install this app: tap <b>Share</b> <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 12v8h14v-8"/></svg> then <b>Add to Home Screen</b>.</span>
+    <button class="link-btn" id="iosHintClose" aria-label="Dismiss">✕</button>
+  </div>
+
+  <aside id="rulesPanel" class="rules-panel" hidden>
+    <div class="rules-grid">
+      <label class="switch"><input type="checkbox" data-setting="das"><span>Double after split (DAS)</span></label>
+      <label class="switch"><input type="checkbox" data-setting="surrender"><span>Late surrender offered</span></label>
+      <label class="field">Doubling allowed on
+        <select data-setting="doubleRule">
+          <option value="any">Any two cards</option>
+          <option value="9-11">Hard 9, 10, 11 only</option>
+          <option value="10-11">Hard 10, 11 only</option>
+        </select>
+      </label>
+      <label class="field">Dealer on soft 17
+        <select data-setting="h17">
+          <option value="true">Hits (H17)</option>
+          <option value="false">Stands (S17)</option>
+        </select>
+      </label>
+      <label class="field">Blackjack pays
+        <select data-setting="bjPayout">
+          <option value="1.5">3 : 2</option>
+          <option value="1.2">6 : 5</option>
+        </select>
+      </label>
+      <label class="switch"><input type="checkbox" data-setting="showTotals"><span>Show hand totals</span></label>
+    </div>
+    <p class="rules-note">Set these to match the table you play at. <b>DAS</b>, <b>surrender</b> and <b>doubling</b> change which chart answer is correct (Y/N cells, D vs Ds, SUR). Dealer soft 17 and the blackjack payout only affect the Play table; the chart stays the same.</p>
+  </aside>
+
+  <main>
+    <!-- ============================== CHART ============================== -->
+    <section class="tab" id="tab-chart" role="tabpanel" hidden>
+      <div class="chart-layout">
+        <div class="chart-tables" id="chartTables"></div>
+        <aside class="side-panel sticky" id="chartInfo"></aside>
+      </div>
+    </section>
+
+    <!-- ============================== DRILL ============================== -->
+    <section class="tab" id="tab-drill" role="tabpanel" hidden>
+      <div class="toolbar">
+        <div class="chips">
+          <span class="toolbar-label">Practise</span>
+          <label class="chip"><input type="checkbox" data-setting="drillPairs"> Pairs</label>
+          <label class="chip"><input type="checkbox" data-setting="drillSoft"> Soft totals</label>
+          <label class="chip"><input type="checkbox" data-setting="drillHard"> Hard totals</label>
+        </div>
+        <div class="chips">
+          <label class="chip"><input type="checkbox" data-setting="drillAdaptive"> Focus on weak spots</label>
+          <label class="chip"><input type="checkbox" data-setting="drill3Card"> Include 3-card hands</label>
+          <label class="chip"><input type="checkbox" data-setting="drillAutoNext"> Auto-advance when right</label>
+        </div>
+      </div>
+      <div class="stat-row" id="drillStats"></div>
+      <div class="drill-layout">
+        <div>
+          <div class="felt">
+            <div class="felt-top">
+              <span class="rules-pill" id="drillRules"></span>
+              <button class="link-btn light" data-open-rules>change rules</button>
+            </div>
+            <div class="zone">
+              <div class="zone-label">Dealer</div>
+              <div class="cards" id="drillDealer"></div>
+            </div>
+            <div class="zone">
+              <div class="cards" id="drillPlayer"></div>
+              <div class="zone-label hand-label" id="drillHandLabel"></div>
+            </div>
+            <div class="verdict" id="drillVerdict" aria-hidden="true"></div>
+          </div>
+          <div class="actions" id="drillActions">
+            <button class="act" data-action="H">Hit <kbd>H</kbd></button>
+            <button class="act" data-action="S">Stand <kbd>S</kbd></button>
+            <button class="act" data-action="D">Double <kbd>D</kbd></button>
+            <button class="act" data-action="P">Split <kbd>P</kbd></button>
+            <button class="act" data-action="R">Surrender <kbd>R</kbd></button>
+            <button class="act ghost" id="drillNext">Next <kbd>Space</kbd></button>
+          </div>
+        </div>
+        <div class="feedback side-panel" id="drillFeedback" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- ============================== QUIZ =============================== -->
+    <section class="tab" id="tab-quiz" role="tabpanel" hidden>
+      <div class="toolbar">
+        <div class="chips">
+          <span class="toolbar-label">Table</span>
+          <div class="seg" id="quizTableSeg">
+            <button data-value="pairs">Pairs</button>
+            <button data-value="soft">Soft</button>
+            <button data-value="hard">Hard</button>
+            <button data-value="surrender">Surrender</button>
+          </div>
+        </div>
+        <div class="chips">
+          <span class="toolbar-label">Order</span>
+          <div class="seg" id="quizOrderSeg">
+            <button data-value="rows">Row by row</button>
+            <button data-value="random">Random</button>
+          </div>
+          <button class="btn" id="quizRestart">Restart</button>
+        </div>
+      </div>
+      <div class="quiz-layout">
+        <div id="quizBoard"></div>
+        <aside class="side-panel">
+          <div id="quizPrompt"></div>
+          <div class="answer-pad" id="quizPad"></div>
+          <div id="quizScore"></div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ============================== PLAY =============================== -->
+    <section class="tab" id="tab-play" role="tabpanel" hidden>
+      <div class="toolbar play-toolbar">
+        <div class="money-box"><span>Bankroll</span><strong id="playBankroll">$0</strong></div>
+        <div class="money-box"><span>Bet</span><strong id="playBet">$0</strong></div>
+        <div class="deck-box">
+          <span>Deck</span><strong id="playDeck">52 / 52</strong>
+          <div class="meter deck-meter" title="Cards left. The line marks the reshuffle point."><i id="playDeckBar"></i><b id="playDeckCut"></b></div>
+        </div>
+        <div class="chips">
+          <div class="seg" id="playModeSeg">
+            <button data-value="coach">Coach</button>
+            <button data-value="strict">Strict</button>
+          </div>
+          <button class="link-btn" id="playReset">Reset bankroll</button>
+        </div>
+      </div>
+      <div class="play-layout">
+        <div>
+          <div class="felt play-felt">
+            <div class="zone">
+              <div class="zone-label">Dealer <span class="total" id="playDealerTotal"></span></div>
+              <div class="cards" id="playDealer"></div>
+            </div>
+            <div class="round-msg" id="playMsg" aria-live="polite"></div>
+            <div class="hands" id="playHands"></div>
+            <div class="verdict" id="playVerdict" aria-hidden="true"></div>
+          </div>
+          <div class="actions">
+            <div class="action-group betting" id="playBetting">
+              <div class="chip-row">
+                <button class="chip-btn c5" data-chip="5" aria-label="Add 5">5</button>
+                <button class="chip-btn c25" data-chip="25" aria-label="Add 25">25</button>
+                <button class="chip-btn c100" data-chip="100" aria-label="Add 100">100</button>
+                <button class="btn small" data-chip="clear">Clear</button>
+              </div>
+              <button class="act primary" id="playDeal">Deal <kbd>Space</kbd></button>
+            </div>
+            <div class="action-group" id="playInsurance" hidden>
+              <span class="ins-text" id="playInsText">Insurance?</span>
+              <button class="act" id="playInsYes">Yes <kbd>I</kbd></button>
+              <button class="act" id="playInsNo">No thanks <kbd>N</kbd></button>
+            </div>
+            <div class="action-group" id="playMoves" hidden>
+              <button class="act" data-action="H">Hit <kbd>H</kbd></button>
+              <button class="act" data-action="S">Stand <kbd>S</kbd></button>
+              <button class="act" data-action="D">Double <kbd>D</kbd></button>
+              <button class="act" data-action="P">Split <kbd>P</kbd></button>
+              <button class="act" data-action="R">Surrender <kbd>R</kbd></button>
+              <button class="act ghost touch-only" id="playHintBtn">Hint</button>
+            </div>
+          </div>
+        </div>
+        <aside class="side-panel coach" id="playCoach"></aside>
+      </div>
+    </section>
+
+    <!-- ============================ PROGRESS ============================= -->
+    <section class="tab" id="tab-progress" role="tabpanel" hidden>
+      <div class="tiles" id="progTiles"></div>
+      <div class="prog-layout">
+        <div id="progHeat"></div>
+        <aside class="side-panel" id="progSide"></aside>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">Strategy based on the Blackjack Apprenticeship basic strategy chart. Progress is saved on this device. Works offline.</footer>
+
+  <script src="js/cards.js"></script>
+  <script src="js/strategy.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/tab-chart.js"></script>
+  <script src="js/tab-drill.js"></script>
+  <script src="js/tab-quiz.js"></script>
+  <script src="js/tab-play.js"></script>
+  <script src="js/tab-progress.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
